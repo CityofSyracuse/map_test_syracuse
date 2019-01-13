@@ -1,0 +1,46 @@
+<html>
+<head>
+  <title>A Leaflet map!</title>
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
+  <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <style>
+    #map{ height: 100% }
+  </style>
+</head>
+<body>
+ 
+  <div id="map"></div>
+ 
+  <script>
+ 
+  // initialize the map
+  var map = L.map('map').setView([43.047939,-76.147453], 13);
+ 
+  // load a tile layer
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map)
+    
+  $.getJSON("s3://snowmap/mergeddata.geojson",function(hoodData){
+    L.geoJson( hoodData, {
+      style: function(feature){
+        var fillColor,
+            MaxOfhour = feature.properties.MaxOfhour,
+            mostrecent = Math.max(MaxOfhour);
+        //if ( MaxOfhour != "Street not yet plowed" ) fillColor = "green";
+        if ( MaxOfhour == mostrecent) fillColor = "green";
+        else fillColor = "red";  // no data
+        return { color: "#999", weight: 1, fillColor: fillColor, fillOpacity: .6 };
+      },
+      onEachFeature: function( feature, layer ){
+        layer.bindPopup( "<strong>" + feature.properties.STREET + "</strong><br/>" + "Street last plowed at: " + feature.properties.MaxOfhour)
+      }
+    }).addTo(map);
+  });
+ 
+  
+ 
+  </script>
+</body>
+</html>
