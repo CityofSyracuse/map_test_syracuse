@@ -1,8 +1,8 @@
 <html>
 <head>
   <title>A Leaflet map!</title>
-  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
-  <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+  <link rel="stylesheet" href="https://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
+  <script src="https://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <style>
     #map{ height: 100% }
@@ -22,7 +22,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map)
     
-  $.getJSON("s3://snowmap/mergeddata.geojson",function(hoodData){
+  $.getJSON("mergeddata.geojson",function(hoodData){
     L.geoJson( hoodData, {
       style: function(feature){
         var fillColor,
