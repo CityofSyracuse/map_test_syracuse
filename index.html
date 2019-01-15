@@ -1,7 +1,7 @@
 
 <html>
 <head>
-  <title>A Leaflet map!</title>
+  <title>Syracuse snowplow tracking map</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
   crossorigin=""/>
@@ -21,6 +21,8 @@
  
   // initialize the map
   var map = L.map('map').setView([43.047939,-76.147453], 13);
+  var plowed = L.layerGroup();
+  var notplowed = L.layerGroup();
  
   // load a tile layer
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -32,19 +34,49 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   $.getJSON("mergeddata.geojson",function(hoodData){
     L.geoJson( hoodData, {
       style: function(feature){
-        var fillColor,
-            MaxOfhour = feature.properties.hour,
-            mostrecent = Math.max(MaxOfhour);
+        var fillColor;
+        var d = new Date();
+        var lasthourd = new Date; lasthourd.setHours( lasthourd.getHours() - 1);
+        var lasthour = lasthourd.getHours();
+        var MaxOfhour = feature.properties.hour;
         //if ( MaxOfhour != "Street not yet plowed" ) fillColor = "green";
-        if ( MaxOfhour == mostrecent) fillColor = "green";
-        else fillColor = "red";  // no data
-        return { color: "#999", weight: 1, fillColor: fillColor, fillOpacity: .6 };
+        if ( MaxOfhour == lasthour) {
+          fillColor = "green",
+          fillOpacity = .7;
+        }
+        else {
+          fillColor = "green",
+          fillOpacity = .4;
+        }  // no data
+        return { color: "white", weight: .1, fillColor: fillColor, fillOpacity: fillOpacity };
       },
       onEachFeature: function( feature, layer ){
         layer.bindPopup( "<strong>" + feature.properties.STREET + "</strong><br/>" + "Street last plowed at: " + feature.properties.hour)
       }
-    }).addTo(map);
+    }).addTo(plowed);
   });
+
+
+    $.getJSON("notplowed.geojson",function(notploweddata){
+    L.geoJson( notploweddata, {
+      style: function(feature){
+        return { color: "grey", weight: .1, fillColor: "grey", fillOpacity: .5 };
+      },
+      onEachFeature: function( feature, layer ){
+        layer.bindPopup( "<strong>" + feature.properties.STREET + "</strong><br/>" + "Not plowed yet")
+      }
+    }).addTo(notplowed);
+  });
+
+  var overlays = {
+    "Plowed": plowed,
+    "Unplowed": notplowed
+  };
+
+
+  plowed.addTo(map);
+  notplowed.addTo(map);
+  L.control.layers(null, overlays,{collapsed:false}).addTo(map);
  
   
  
