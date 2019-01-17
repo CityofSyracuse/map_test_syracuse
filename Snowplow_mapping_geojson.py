@@ -33,7 +33,7 @@ f.close()
 
 
 
-payload = "grant_type=password&username=" +username*"&password="+password
+payload = "grant_type=password&username=" +username+"&password="+password
 headers = {
     'Content-Type': "application/x-www-form-urlencoded",
     'Cache-Control': "no-cache",
