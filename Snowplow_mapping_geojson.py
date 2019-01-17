@@ -20,8 +20,7 @@ import numpy as np
 
 # In[362]:
 
-
-f=open("/account.txt","r")
+f=open("/home/pi/map_test_syracuse/account.txt","r")
 lines=f.readlines()
 username=lines[0].rstrip()
 password=lines[1].rstrip()
@@ -30,15 +29,11 @@ f.close()
 
 # In[363]:
 
-
-username
-
-
 # In[364]:
 
 
 
-payload = "grant_type=password&username="+username+"&password="+password
+payload = "grant_type=password&username=" +username*"&password="+password
 headers = {
     'Content-Type': "application/x-www-form-urlencoded",
     'Cache-Control': "no-cache",
@@ -110,13 +105,13 @@ snowice = ['975118',
 # In[369]:
 
 
-dataSrc = gpd.read_file('dataSrc.geojson')
+dataSrc = gpd.read_file('/home/pi/map_test_syracuse/dataSrc.geojson')
 
 
 # In[370]:
 
 
-mergeddata_all = gpd.read_file('mergeddata.geojson')
+mergeddata_all = gpd.read_file('/home/pi/mergeddata.geojson')
 
 
 # In[371]:
@@ -216,7 +211,7 @@ mergeddata_all = dataSrc[['STREET', 'geometry', 'STREET_ID']].merge(mergeddata_a
 # In[380]:
 
 
-with open('mergeddata.geojson', 'w') as f:
+with open('/home/pi/map_test_syracuse/mergeddata.geojson', 'w') as f:
     f.write(mergeddata_all.to_json())
 
 
@@ -236,6 +231,6 @@ notplowed = notplowed[['STREET', 'geometry', 'STREET_ID']]
 # In[383]:
 
 
-with open('notplowed.geojson', 'w') as f:
+with open('/home/pi/map_test_syracuse/notplowed.geojson', 'w') as f:
     f.write(notplowed.to_json())
 
