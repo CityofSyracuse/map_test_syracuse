@@ -21,7 +21,7 @@ import numpy as np
 # In[362]:
 
 
-f=open("account.txt","r")
+f=open("/account.txt","r")
 lines=f.readlines()
 username=lines[0].rstrip()
 password=lines[1].rstrip()
