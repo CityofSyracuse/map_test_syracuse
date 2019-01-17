@@ -7,7 +7,6 @@
 import requests 
 from time import gmtime, strftime
 import pandas as pd
-import shapefile
 from shapely.geometry import shape, Point
 from pyproj import Proj, transform
 import geopandas as gpd
@@ -22,7 +21,7 @@ import numpy as np
 # In[362]:
 
 
-f=open("/Users/samedelstein/map_test_syracuse/account.txt","r")
+f=open("account.txt","r")
 lines=f.readlines()
 username=lines[0].rstrip()
 password=lines[1].rstrip()
@@ -111,13 +110,13 @@ snowice = ['975118',
 # In[369]:
 
 
-dataSrc = gpd.read_file('/Users/samedelstein/map_test_syracuse/dataSrc.geojson')
+dataSrc = gpd.read_file('dataSrc.geojson')
 
 
 # In[370]:
 
 
-mergeddata_all = gpd.read_file('/Users/samedelstein/map_test_syracuse/mergeddata.geojson')
+mergeddata_all = gpd.read_file('mergeddata.geojson')
 
 
 # In[371]:
@@ -134,7 +133,7 @@ dataSrc = dataSrc[(dataSrc['CART_TYPE'] != 'INTERSTATES') & (dataSrc['CART_TYPE'
 
 
 timezone = timedelta(hours = 5)
-systime = datetime.now() + timezone - timedelta(hours = 4)
+systime = datetime.now() + timezone - timedelta(hours = 1)
 hour = (systime - timezone).hour
 date = (systime - timezone).strftime('%Y-%m-%d')
 start_date = systime.strftime("%Y-%m-%dT%H") + ':00:00Z'
@@ -217,7 +216,7 @@ mergeddata_all = dataSrc[['STREET', 'geometry', 'STREET_ID']].merge(mergeddata_a
 # In[380]:
 
 
-with open('/Users/samedelstein/map_test_syracuse/mergeddata.geojson', 'w') as f:
+with open('mergeddata.geojson', 'w') as f:
     f.write(mergeddata_all.to_json())
 
 
@@ -237,6 +236,6 @@ notplowed = notplowed[['STREET', 'geometry', 'STREET_ID']]
 # In[383]:
 
 
-with open('/Users/samedelstein/map_test_syracuse/notplowed.geojson', 'w') as f:
+with open('notplowed.geojson', 'w') as f:
     f.write(notplowed.to_json())
 
