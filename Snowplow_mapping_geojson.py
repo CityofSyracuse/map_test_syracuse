@@ -54,11 +54,6 @@ response = requests.request("POST", 'https://auth.networkfleet.com/token', data=
 response = response.json()
 
 
-# In[367]:
-
-
-response
-
 
 # In[368]:
 
@@ -111,7 +106,7 @@ dataSrc = gpd.read_file('/home/pi/map_test_syracuse/dataSrc.geojson')
 # In[370]:
 
 
-mergeddata_all = gpd.read_file('/home/pi/mergeddata.geojson')
+mergeddata_all = gpd.read_file('/home/pi/map_test_syracuse/mergeddata.geojson')
 
 
 # In[371]:
