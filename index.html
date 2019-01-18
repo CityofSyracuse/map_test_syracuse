@@ -1,4 +1,3 @@
-
 <html>
 <head>
   <title>Syracuse snowplow tracking map</title>
@@ -23,63 +22,79 @@
   var map = L.map('map').setView([43.047939,-76.147453], 13);
   var plowed = L.layerGroup();
   var notplowed = L.layerGroup();
- 
+  var plowedlasthour = L.layerGroup();
+
+  var d = new Date();
+  var lasthourd = new Date; lasthourd.setHours( lasthourd.getHours() - 1);
+  var lasthour = lasthourd.getHours();
+  var year = d.getFullYear()
+  var month = ("0" + (d.getMonth() +1)).slice(-2)
+  var day = ("0" + d.getDate()).slice(-2)
+  var ymd = year + "-" + month + "-" + day
+
+
   // load a tile layer
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
   subdomains: 'abcd',
   maxZoom: 19
 }).addTo(map);
-    
-  $.getJSON("mergeddata.geojson",function(hoodData){
-    L.geoJson( hoodData, {
-      style: function(feature){
-        var fillColor;
-        var d = new Date();
-        var lasthourd = new Date; lasthourd.setHours( lasthourd.getHours() - 1);
-        var lasthour = lasthourd.getHours();
-        var MaxOfhour = feature.properties.hour;
-        //if ( MaxOfhour != "Street not yet plowed" ) fillColor = "green";
-        if ( MaxOfhour == lasthour) {
-          fillColor = "green",
-          fillOpacity = .7;
-        }
-        else {
-          fillColor = "green",
-          fillOpacity = .4;
-        }  // no data
-        return { color: "white", weight: .1, fillColor: fillColor, fillOpacity: fillOpacity };
-      },
-      onEachFeature: function( feature, layer ){
-        layer.bindPopup( "<strong>" + feature.properties.STREET + "</strong><br/>" + "Street last plowed at: " + feature.properties.hour)
-      }
-    }).addTo(plowed);
-  });
 
+    $.getJSON("mergeddata.geojson", function(plowedlasthourdata){
+      L.geoJson(plowedlasthourdata, {
+            filter: function(feature, layer) {
+                return (feature.properties.hour == lasthour) & (feature.properties.date == ymd);
+            },
+            style: function(feature){
+                return { color: "green", weight: 1, fillColor: 'green', fillOpacity: .5, Opacity: 1 };
+      },
+            onEachFeature: function( feature, layer ){
+        layer.bindPopup( "<strong>" + feature.properties.STREET + "</strong><br/>" + "Street last plowed at: " + feature.properties.hour + ":00 on " + feature.properties.date)
+      
+            }
+        }).addTo(plowedlasthour);
+    });
 
     $.getJSON("notplowed.geojson",function(notploweddata){
-    L.geoJson( notploweddata, {
-      style: function(feature){
-        return { color: "grey", weight: .1, fillColor: "grey", fillOpacity: .5 };
+        L.geoJson( notploweddata, {
+          style: function(feature){
+            return { color: "grey", weight: .1, fillColor: "grey", fillOpacity: .5 };
+          },
+          onEachFeature: function( feature, layer ){
+            layer.bindPopup( "<strong>" + feature.properties.STREET + "</strong><br/>" + "Not plowed yet")
+          }
+        }).addTo(notplowed);
+      });
+
+    $.getJSON("mergeddata.geojson", function(ploweddata){
+      L.geoJson(ploweddata, {
+            filter: function(feature, layer) {
+                return feature.properties.hour != lasthour;
+            },
+            style: function(feature){
+                return { color: "green", weight: .2, fillColor: 'green', fillOpacity: .2, Opacity:.2 };
       },
-      onEachFeature: function( feature, layer ){
-        layer.bindPopup( "<strong>" + feature.properties.STREET + "</strong><br/>" + "Not plowed yet")
-      }
-    }).addTo(notplowed);
-  });
+            onEachFeature: function( feature, layer ){
+        layer.bindPopup( "<strong>" + feature.properties.STREET + "</strong><br/>" + "Street last plowed at: " + feature.properties.hour + ":00 on " + feature.properties.date)
+      
+            }
+        }).addTo(plowed);
+    });
+
+plowedlasthour.addTo(map);
+notplowed.addTo(map);
+plowed.addTo(map);
+
 
   var overlays = {
+    "Plowed Last Hour": plowedlasthour,
     "Plowed": plowed,
-    "Unplowed": notplowed
+    "Not yet plowed": notplowed
   };
 
+    L.control.layers(null, overlays,{collapsed:false, position: 'bottomright'}).addTo(map);
 
-  plowed.addTo(map);
-  notplowed.addTo(map);
-  L.control.layers(null, overlays,{collapsed:false}).addTo(map);
- 
-  
- 
+
   </script>
 </body>
 </html>
